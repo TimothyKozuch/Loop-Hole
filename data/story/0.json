@@ -52,12 +52,12 @@
           {
             "text": "Terrifying (scared of the dark, honest)",
             "nextNode": "Peaceful",
-            "Melody_Song_flags_changes": ["scared of the dark", "honest"]
+            "flags_changes": ["scared of the dark", "honest"]
           },
           {
             "text": "Nothing to be afraid of (brave face, liar)",
             "nextNode": "Peaceful",
-            "Melody_Song_flags_changes": ["brave face", "liar"]
+            "flags_changes": ["brave face", "liar"]
           }
         ]
       },
@@ -66,7 +66,7 @@
         "text": "Peaceful...",
         "audioFile": "lyla_peaceful_01.wav",
         "animation": "None",
-        "Lyla_Silence_flags_changes": ["dark knight"],
+        "flags_changes": ["dark knight"],
         "choices": [
           {
             "text": "Oh...",

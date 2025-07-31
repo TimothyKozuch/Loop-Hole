@@ -2,11 +2,9 @@
 "playerLevel": 0,
     "inventory": {},
     "equipped": {},
-    "Melody_Song_flags": {},
-    "Melody_Team": ["Lyla", "Corwin"],
-    "Lyla_Silence_flags": {},
-    "Lyla_Team": ["Melody", "Corwin"],
-    
+    "flags": {},
+    "Team": ["Lyla", "Corwin"],
+
     "controls": {
         "KEYBOARD": {
             "a":{"action": "moveHorizontal","value":-1},
@@ -32,7 +30,6 @@
             "9":{"action": "interact","value":9},
 
             "escape":{"action": "pause","value":1},
-            "c":{"action": "compose","value":1},
             "x": {"action": "dash", "value":1},
             "left shift": {"action": "startCasting", "value":1},
             "space": {"action": "jump", "value":1},
