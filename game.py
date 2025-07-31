@@ -7,7 +7,7 @@ import random
 import pygame
 import json
 
-from scripts.utils import load_image, load_images, Animation
+from scripts.utils import load_image, load_images, load_image_with_black, load_images_with_black, Animation
 from scripts.entities import PhysicsEntity, Player, Enemy, Friend
 from scripts.tilemap import Tilemap
 from scripts.clouds import Clouds
@@ -56,7 +56,7 @@ class Game:
             #'friend/idle': Animation(load_images('entities/friend/idle'), img_dur=6),
             #'friend/closest_friend': Animation(load_images('entities/friend/closest_friend'), img_dur=10),
 
-            'player/idle': Animation(load_images('entities/player/idle'), img_dur=6),
+            'player/idle': Animation(load_images_with_black('entities/player/idle'), img_dur=6),
             'player/run': Animation(load_images('entities/player/run'), img_dur=4),
             'player/jump': Animation(load_images('entities/player/jump'),img_dur=1,loop=False),
             'player/slide': Animation(load_images('entities/player/slide')),
@@ -85,7 +85,7 @@ class Game:
         
         self.clouds = Clouds(self.assets['clouds'], count=16)
         #8,15
-        self.player = Player(self, (50, 50), (8, 15),[self.info.current_w,self.info.current_h])
+        self.player = Player(self, (50, 50), (16, 30),[self.info.current_w,self.info.current_h])
 
         self.tilemap = Tilemap(self, tile_size=16)
         
