@@ -63,6 +63,7 @@ class Game:
             'player/wall_slide': Animation(load_images_with_black('entities/player/wall_slide')),
 
             'particle/leaf': Animation(load_images('particles/leaf'), img_dur=20, loop=False),
+            #'particle/paper': Animation(load_images('particles/paper'), img_dur=20, loop=False),
             'particle/particle': Animation(load_images('particles/particle'), img_dur=6, loop=False),
             'gun': load_image('gun.png'),
             'projectile': load_image('projectile.png'),
@@ -214,6 +215,10 @@ class Game:
                     pos = (rect.x + random.random() * rect.width, rect.y + random.random() * rect.height)
                     self.particles.append(Particle(self, 'leaf', pos, velocity=[-0.1, 0.3], frame=random.randint(0, 20)))
             
+            #if random.random() * 49999 < self.player.rect.width * self.player.rect.height:
+            #        pos = (self.player.rect.x + random.random() * self.player.rect.width, self.player.rect.y + random.random() * self.player.rect.height)
+            #        self.particles.append(Particle(self, 'paper', pos, velocity=[-0.1, 0.3], frame=random.randint(0, 20)))
+
             self.clouds.update()
             self.clouds.render(self.display_2, offset=render_scroll)
             
