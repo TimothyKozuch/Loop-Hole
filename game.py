@@ -58,9 +58,9 @@ class Game:
 
             'player/idle': Animation(load_images_with_black('entities/player/idle'), img_dur=6),
             'player/run': Animation(load_images_with_black('entities/player/run'), img_dur=4),
-            'player/jump': Animation(load_images('entities/player/jump'),img_dur=1,loop=False),
-            'player/slide': Animation(load_images('entities/player/slide')),
-            'player/wall_slide': Animation(load_images('entities/player/wall_slide')),
+            'player/jump': Animation(load_images_with_black('entities/player/jump'),img_dur=1,loop=False),
+            'player/slide': Animation(load_images_with_black('entities/player/slide')),
+            'player/wall_slide': Animation(load_images_with_black('entities/player/wall_slide')),
 
             'particle/leaf': Animation(load_images('particles/leaf'), img_dur=20, loop=False),
             'particle/particle': Animation(load_images('particles/particle'), img_dur=6, loop=False),
