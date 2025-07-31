@@ -18,7 +18,7 @@ class PhysicsEntity:
         self.action = ''
         self.anim_offset = (-3, -3)
         self.flip = False
-        
+
         self.set_action('idle')
         
         self.last_movement = [0, 0]
@@ -280,12 +280,7 @@ class Player(PhysicsEntity):
             self.velocity[0] = min(self.velocity[0] + 0.1, 0)
     
     def render(self, surf, offset=(0, 0)):
-        if self.action == 'run' or self.action == 'jump' or self.action == 'idle' or self.action == 'wall_slide':
-            surf.blit(pygame.transform.flip(self.animation.img(), not self.flip, False), (self.pos[0] - offset[0] + self.anim_offset[0], self.pos[1] - offset[1] + self.anim_offset[1]))
-        elif abs(self.dashing) <= 50:
-            super().render(surf, offset=offset)
-
-
+        super().render(surf, offset=offset)
         if self.casting:
             print("casting")
             
