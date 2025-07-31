@@ -265,10 +265,10 @@ class Game:
                 if kill:
                     self.sparks.remove(spark)
                     
-            # display_mask = pygame.mask.from_surface(self.display)
-            # display_sillhouette = display_mask.to_surface(setcolor=(0, 0, 0, 180), unsetcolor=(0, 0, 0, 0))
-            # for offset in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-            #     self.display_2.blit(display_sillhouette, offset)
+            display_mask = pygame.mask.from_surface(self.display)
+            display_sillhouette = display_mask.to_surface(setcolor=(0, 0, 0, 180), unsetcolor=(0, 0, 0, 0))
+            for offset in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                self.display_2.blit(display_sillhouette, offset)
             
             for particle in self.particles.copy():
                 kill = particle.update()
