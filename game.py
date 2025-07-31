@@ -603,7 +603,7 @@ class Game:
                 for c in range(3):
                     other_rect = pygame.Rect(250 + c * (other_button_width + 10), y_pos, other_button_width, button_height)
                     if other_rect.collidepoint(mx, my):
-                        self.open_composition_editor(member, f"other {c+1}")
+                        self.other(member, f"other {c+1}")
                         return
 
             y_offset += len(team_list) * row_height + 20
