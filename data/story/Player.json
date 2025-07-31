@@ -1,7 +1,8 @@
 {
-"playerLevel": 0,
-    "inventory": {},
+"playerLevel/numOfWins": 0,
+    "inventory": {"Breifcase Collection": [],"Tie Collection":[],"Suit Collection":[],"Shoe Collection":[],"Ranged Collection":[]},
     "equipped": {},
+    "upgrades":{"breifcaseLevel": 0,"tieLevel":0,"suitLevel":0,"shoeLevel":0,"rangedLevel":0,"moneyLevel/moneyFrequency/moneyValue":0,"bribeLevel/judgeMaxHealth":0,"carLevel/keyFrequency":0},
     "flags": {},
     "Team": ["Lyla", "Corwin"],
 
@@ -15,7 +16,6 @@
             "up":{"action": "moveVirtical","value":-1},
             "s":{"action": "moveVirtical","value":1},
             "down":{"action": "moveVirtical","value":1},
-
 
             "e": {"action": "interact", "value":0},
 

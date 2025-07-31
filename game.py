@@ -104,7 +104,21 @@ class Game:
         return {
             'flags':self.player_state['flags']
         } 
-
+    @property
+    def upgrades(self):
+        return {
+            'upgrades': self.player_state.get('upgrades'),
+        }
+    @property
+    def inventory(self):
+        return {
+            'inventory': self.player_state.get('inventory', []),
+        }
+    @property
+    def equipped(self):
+        return {
+            'equipped': self.player_state.get('equipped'),
+        }
         
     def load_level(self, map_id):
         pygame.mixer.music.load('data/music.wav')
@@ -704,12 +718,26 @@ class Game:
         # Header
         header = self.font.render("Inventory", True, (255, 255, 255))
         self.screen.blit(header, (50, y_start))
-        
-        # Example content - replace with your actual inventory system
-        items = ["Potion", "Key", "Map", "Scroll"]
-        for i, item in enumerate(items):
-            item_text = self.font.render(f"• {item}", True, (200, 200, 200))
-            self.screen.blit(item_text, (70, y_start + 40 + i * 30))
+
+        # Use the inventory property
+        inventory_data = self.inventory.get("inventory", {})
+        y_offset = y_start + 40
+        for collection_name, items in inventory_data.items():
+            # Draw collection name
+            collection_text = self.font.render(f"{collection_name}:", True, (180, 220, 255))
+            self.screen.blit(collection_text, (70, y_offset))
+            y_offset += 30
+            # Draw each item in the collection
+            if items:
+                for item in items:
+                    item_text = self.font.render(f"• {item}", True, (200, 200, 200))
+                    self.screen.blit(item_text, (100, y_offset))
+                    y_offset += 25
+            else:
+                empty_text = self.font.render("• (empty)", True, (120, 120, 120))
+                self.screen.blit(empty_text, (100, y_offset))
+                y_offset += 25
+            y_offset += 10  # Space between collections
 
     def draw_team_tab(self, sw, sh, y_start, mx, my):
         """Draw the team tab content with rearrange and other buttons for Team"""
