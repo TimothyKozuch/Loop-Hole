@@ -96,29 +96,19 @@ class Game:
 
     @property
     def team(self):
-        return {
-            'Team': self.player_state.get('Team', []),
-        }
+        return self.player_state.get('Team', [])
     @property
     def player_flags(self):
-        return {
-            'flags':self.player_state['flags']
-        } 
+        return self.player_state['flags']
     @property
     def upgrades(self):
-        return {
-            'upgrades': self.player_state.get('upgrades'),
-        }
+        return self.player_state.get('upgrades')
     @property
     def inventory(self):
-        return {
-            'inventory': self.player_state.get('inventory', []),
-        }
+        return self.player_state.get('inventory', [])
     @property
     def equipped(self):
-        return {
-            'equipped': self.player_state.get('equipped'),
-        }
+        return self.player_state.get('equipped')
         
     def load_level(self, map_id):
         pygame.mixer.music.load('data/music.wav')
@@ -586,6 +576,7 @@ class Game:
             clock.tick(60)
 
         self.awaiting_rebind = None
+        self.run()
 
     def handle_team_button_clicks(self, mx, my, sw, sh, y_start):
         """Handle clicks on up/down and other buttons"""
@@ -597,7 +588,7 @@ class Game:
 
         y_offset = y_start + 40
         for team_key in ["Team"]:
-            team_list = self.player_state.get(team_key, [])
+            team_list = self.team
             y_offset += 30  # For team label
             for i, member in enumerate(team_list):
                 y_pos = y_offset + i * row_height
@@ -719,8 +710,8 @@ class Game:
         header = self.font.render("Inventory", True, (255, 255, 255))
         self.screen.blit(header, (50, y_start))
 
-        # Use the inventory property
-        inventory_data = self.inventory.get("inventory", {})
+        # Use the inventory property directly
+        inventory_data = self.inventory
         y_offset = y_start + 40
         for collection_name, items in inventory_data.items():
             # Draw collection name
@@ -744,9 +735,7 @@ class Game:
         header = self.font.render("Team", True, (255, 255, 255))
         self.screen.blit(header, (50, y_start))
 
-        teams = [
-            ("Player Team", self.player_state.get("Team", []))
-        ]
+        teams = [("Player Team", self.team)]
         row_height = 60
         button_width = 100
         button_height = 30
