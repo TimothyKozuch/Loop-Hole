@@ -2,7 +2,7 @@ import sys
 
 import pygame
 
-from scripts.utils import load_images
+from scripts.utils import load_images,load_images_with_black
 from scripts.tilemap import Tilemap
 
 RENDER_SCALE = 2.0
@@ -23,7 +23,7 @@ class Editor:
             'grass': load_images('tiles/grass'),
             'large_decor': load_images('tiles/large_decor'),
             'stone': load_images('tiles/stone'),
-            'spawners': load_images('tiles/spawners'),
+            'spawners': load_images_with_black('tiles/spawners'),
             'wood':load_images('tiles/wood'),
             'buildings':load_images('tiles/buildings')
         }
