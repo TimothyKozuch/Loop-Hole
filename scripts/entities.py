@@ -122,6 +122,8 @@ class Friend(PhysicsEntity):
             if 'end of level' in chosen_choice:
                 self.game.endLevel()
 
+            
+
         # Also apply any flag changes from the current dialogue node itself
         if "flags_changes" in self.current_dialogue:
             choice_data = {"flags_changes": self.current_dialogue["flags_changes"]}
@@ -130,6 +132,8 @@ class Friend(PhysicsEntity):
         if "end of level" in self.current_dialogue:
             self.game.endLevel()
 
+        if "menu" in self.current_dialogue:
+                self.game.openShop()
         self.current_dialogue = self.text[self.dialogue_ID]
         responses = ''
 

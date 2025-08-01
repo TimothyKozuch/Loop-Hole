@@ -1,60 +1,180 @@
 {
-"playerLevel/numOfWins": 0,
-    "inventory": {"Breifcase Collection": [],"Tie Collection":[],"Suit Collection":[],"Shoe Collection":[],"Ranged Collection":[]},
+    "playerLevel/numOfWins": 0,
+    "inventory": {
+        "Breifcase Collection": [],
+        "Tie Collection": [],
+        "Suit Collection": [],
+        "Shoe Collection": [],
+        "Ranged Collection": []
+    },
     "equipped": {},
-    "upgrades":{"breifcaseLevel": 0,"tieLevel":0,"suitLevel":0,"shoeLevel":0,"rangedLevel":0,"moneyLevel/moneyFrequency/moneyValue":0,"bribeLevel/judgeMaxHealth":0,"carLevel/keyFrequency":0},
+    "upgrades": {
+        "breifcaseLevel": 0,
+        "tieLevel": 0,
+        "suitLevel": 0,
+        "shoeLevel": 0,
+        "rangedLevel": 0,
+        "moneyLevel/moneyFrequency/moneyValue": 0,
+        "bribeLevel/judgeMaxHealth": 0,
+        "carLevel/keyFrequency": 0
+    },
     "flags": {},
-    "Team": ["Lyla", "Corwin"],
-
+    "Team": [
+        "Lyla",
+        "Corwin"
+    ],
     "controls": {
         "KEYBOARD": {
-            "a":{"action": "moveHorizontal","value":-1},
-            "left":{"action": "moveHorizontal","value":-1},
-            "d":{"action": "moveHorizontal","value":1},
-            "right":{"action": "moveHorizontal","value":1},
-            "w":{"action": "moveVirtical","value":-1},
-            "up":{"action": "moveVirtical","value":-1},
-            "s":{"action": "moveVirtical","value":1},
-            "down":{"action": "moveVirtical","value":1},
-
-            "e": {"action": "interact", "value":0},
-
-            "1":{"action": "interact","value":1},
-            "2":{"action": "interact","value":2},
-            "3":{"action": "interact","value":3},
-            "4":{"action": "interact","value":4},
-            "5":{"action": "interact","value":5},
-            "6":{"action": "interact","value":6},
-            "7":{"action": "interact","value":7},
-            "8":{"action": "interact","value":8},
-            "9":{"action": "interact","value":9},
-
-            "escape":{"action": "pause","value":1},
-            "x": {"action": "dash", "value":1},
-            "left shift": {"action": "startCasting", "value":1},
-            "space": {"action": "jump", "value":1},
-
-            "mouse_1":{"action": "dash","value":1},
-            "mouse_2":{"action": "dash","value":1},
-            "mouse_3":{"action": "dash","value":1},
-            "mouse_4":{"action": "scroll","value":-1},
-            "mouse_5":{"action": "scroll","value":1}
-
+            "a": {
+                "action": "moveHorizontal",
+                "value": -1
+            },
+            "left": {
+                "action": "moveHorizontal",
+                "value": -1
+            },
+            "d": {
+                "action": "moveHorizontal",
+                "value": 1
+            },
+            "right": {
+                "action": "moveHorizontal",
+                "value": 1
+            },
+            "w": {
+                "action": "moveVirtical",
+                "value": -1
+            },
+            "up": {
+                "action": "moveVirtical",
+                "value": -1
+            },
+            "s": {
+                "action": "moveVirtical",
+                "value": 1
+            },
+            "down": {
+                "action": "moveVirtical",
+                "value": 1
+            },
+            "e": {
+                "action": "interact",
+                "value": 0
+            },
+            "1": {
+                "action": "interact",
+                "value": 1
+            },
+            "2": {
+                "action": "interact",
+                "value": 2
+            },
+            "3": {
+                "action": "interact",
+                "value": 3
+            },
+            "4": {
+                "action": "interact",
+                "value": 4
+            },
+            "5": {
+                "action": "interact",
+                "value": 5
+            },
+            "6": {
+                "action": "interact",
+                "value": 6
+            },
+            "7": {
+                "action": "interact",
+                "value": 7
+            },
+            "8": {
+                "action": "interact",
+                "value": 8
+            },
+            "9": {
+                "action": "interact",
+                "value": 9
+            },
+            "escape": {
+                "action": "pause",
+                "value": 1
+            },
+            "x": {
+                "action": "dash",
+                "value": 1
+            },
+            "left shift": {
+                "action": "startCasting",
+                "value": 1
+            },
+            "space": {
+                "action": "jump",
+                "value": 1
+            },
+            "mouse_1": {
+                "action": "dash",
+                "value": 1
+            },
+            "mouse_2": {
+                "action": "dash",
+                "value": 1
+            },
+            "mouse_3": {
+                "action": "dash",
+                "value": 1
+            },
+            "mouse_4": {
+                "action": "scroll",
+                "value": -1
+            },
+            "mouse_5": {
+                "action": "scroll",
+                "value": 1
+            }
         },
         "CONTROLLER": {
-            "BUTTONDOWN_0": {"action": "interact", "value":0},
-            "BUTTONDOWN_1": {"action": "dash", "value":1},
-            "BUTTONDOWN_2": {"action": "jump", "value":1},
-            "BUTTONDOWN_7": {"action": "pause", "value":1},
-
-            "HATMOTION_(0, 1)": {"action": "scroll", "value":-1},
-            "HATMOTION_(0, -1)": {"action": "scroll", "value":1},
-            
-            "AXISMOTION_0": {"action": "moveHorizontal", "sensitivity": 0.2},
-            "AXISMOTION_1": {"action": "moveVirtical", "sensitivity": 0.2},
-            "AXISMOTION_4": {"action": "startCasting", "sensitivity": 0.5},
-            "AXISMOTION_5": {"action": "dash", "sensitivity": 0.5}
-
+            "BUTTONDOWN_0": {
+                "action": "interact",
+                "value": 0
+            },
+            "BUTTONDOWN_1": {
+                "action": "dash",
+                "value": 1
+            },
+            "BUTTONDOWN_2": {
+                "action": "jump",
+                "value": 1
+            },
+            "BUTTONDOWN_7": {
+                "action": "pause",
+                "value": 1
+            },
+            "HATMOTION_(0, 1)": {
+                "action": "scroll",
+                "value": -1
+            },
+            "HATMOTION_(0, -1)": {
+                "action": "scroll",
+                "value": 1
+            },
+            "AXISMOTION_0": {
+                "action": "moveHorizontal",
+                "sensitivity": 0.2
+            },
+            "AXISMOTION_1": {
+                "action": "moveVirtical",
+                "sensitivity": 0.2
+            },
+            "AXISMOTION_4": {
+                "action": "startCasting",
+                "sensitivity": 0.5
+            },
+            "AXISMOTION_5": {
+                "action": "dash",
+                "sensitivity": 0.5
+            }
         }
     }
 }

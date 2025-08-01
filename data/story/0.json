@@ -21,7 +21,8 @@
         "speaker": "Accountant",
         "text": "Spend your well deserved money",
         "audioFile": "office.wav",
-        "animation": "shop",
+        "animation": "None",
+        "menu": "shop",
         "choices": []
       },
       "exit": {
@@ -29,7 +30,6 @@
         "text": "goodbye",
         "audioFile": "office.wav",
         "animation": "None",
-        "end of level":"True",
         "choices": []
       }
     },
