@@ -44,6 +44,7 @@ class Game:
             'decor': load_images('tiles/decor'),
             'grass': load_images('tiles/grass'),
             'wood': load_images('tiles/wood'),
+            'concrete': load_images_with_black('tiles/concrete'),
 
             'buildings': load_images('tiles/buildings'),
             'large_decor': load_images('tiles/large_decor'),

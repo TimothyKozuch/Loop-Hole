@@ -21,6 +21,7 @@ class Editor:
         self.assets = {
             'decor': load_images('tiles/decor'),
             'grass': load_images('tiles/grass'),
+            'concrete': load_images_with_black('tiles/concrete'),
             'large_decor': load_images('tiles/large_decor'),
             'stone': load_images('tiles/stone'),
             'spawners': load_images_with_black('tiles/spawners'),
