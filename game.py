@@ -13,6 +13,7 @@ from scripts.tilemap import Tilemap
 from scripts.clouds import Clouds
 from scripts.particle import Particle
 from scripts.spark import Spark
+from scripts.entities import Money
 
 class Game:
     def __init__(self):
@@ -64,13 +65,13 @@ class Game:
             'player/jump': Animation(load_images_with_black('entities/player/jump'),img_dur=1,loop=False),
             'player/slide': Animation(load_images_with_black('entities/player/slide')),
             'player/wall_slide': Animation(load_images_with_black('entities/player/wall_slide')),
+            'money/idle': Animation(load_images_with_black('entities/money/idle'), img_dur=6),
 
             'particle/leaf': Animation(load_images('particles/leaf'), img_dur=20, loop=False),
             'particle/paper': Animation(load_images('particles/paper'), img_dur=20, loop=False),
             'particle/particle': Animation(load_images('particles/particle'), img_dur=6, loop=False),
             'gun': load_image('gun.png'),
             'projectile': load_image('projectile.png'),
-
         }
         
         self.sfx = {
@@ -115,6 +116,7 @@ class Game:
         return self.player_state.get('equipped')
         
     def load_level(self, map_id):
+        
         pygame.mixer.music.load('data/music.wav')
         pygame.mixer.music.set_volume(0.5)
         pygame.mixer.music.play(-1)
@@ -129,6 +131,7 @@ class Game:
             
         self.enemies = []
         self.friends = []
+        self.money = []
         self.shop_open = False
 
 
@@ -195,8 +198,7 @@ class Game:
             if not len(self.enemies):
                 self.transition += 1
                 if self.transition > 30:
-                    self.level = min(self.level + 1, len(os.listdir('data/maps')) - 1)
-                    self.load_level(self.level)
+                    self.endLevel()
             if self.transition < 0:
                 self.transition += 1
             
@@ -215,7 +217,8 @@ class Game:
                 if random.random() * 49999 < rect.width * rect.height:
                     pos = (rect.x + random.random() * rect.width, rect.y + random.random() * rect.height)
                     self.particles.append(Particle(self, 'leaf', pos, velocity=[-0.1, 0.3], frame=random.randint(0, 20)))
-            
+
+            #paper effect
             if random.random() * 49999 < self.player.rect().width * self.player.rect().height:
                     pos = (self.player.rect().x + random.random() * self.player.rect().width, self.player.rect().y + random.random() * self.player.rect().height)
                     self.particles.append(Particle(self, 'paper', pos, velocity=[-0.1, 0.3], frame=random.randint(0, 20)))
@@ -229,6 +232,7 @@ class Game:
                 kill = enemy.update(self.tilemap, (0, 0))
                 enemy.render(self.display, offset=render_scroll)
                 if kill:
+                    self.lootMoney(enemy.rect().center)
                     self.enemies.remove(enemy)
             
             for friend in self.friends.copy():
@@ -236,6 +240,12 @@ class Game:
                 friend.render(self.display, offset=render_scroll)
                 if kill:
                     print(friend.woah())
+
+            for money in self.money.copy():
+                kill = money.update(self.tilemap, (0, 0))
+                money.render(self.display, offset=render_scroll)
+                if kill:
+                    self.money.remove(money)
                     
             self.closestFriend = self.player.closestFriend(self.display, offset=render_scroll) #interact icon
             
@@ -375,6 +385,8 @@ class Game:
 
             # Draw the dialogue text
             self.draw_multiline_text(self.screen, self.current_dialogue, self.font, (0,0,0), 0, 0)
+
+            self.render_hud()
 
             pygame.display.update()
             self.clock.tick(60)
@@ -896,4 +908,25 @@ class Game:
             pygame.display.update()
             clock.tick(60)
 
+    def lootMoney(self, center, value=1):
+        self.money.append(Money(self, center, value, size=(12, 6)))
+    
+    def render_hud(self):
+        # Money HUD (top right)
+        money_img = self.assets['money/idle'].img()  # Use your money animation's idle frame
+        sw, sh = self.screen.get_size()
+        # Calculate scale factor (assuming your base resolution is 320x180, adjust as needed)
+        base_w, base_h = 320, 180
+        scale_x = sw / base_w
+        scale_y = sh / base_h
+        scale = min(scale_x, scale_y)
+        scaled_size = (int(money_img.get_width() * scale), int(money_img.get_height() * scale))
+        money_img_scaled = pygame.transform.scale(money_img, scaled_size)
+        img_x = sw - money_img_scaled.get_width() - 30
+        img_y = 30
+        self.screen.blit(money_img_scaled, (img_x, img_y))
+        money_count = self.player_state['upgrades']["money"]
+        money_text = self.font.render(str(money_count), True, (255, 255, 0))
+        self.screen.blit(money_text, (img_x - money_text.get_width() - 10, img_y + money_img_scaled.get_height() // 2 - money_text.get_height() // 2))
+        
 Game().run()

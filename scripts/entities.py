@@ -211,6 +211,23 @@ class Enemy(PhysicsEntity):
         else:
             surf.blit(self.game.assets['gun'], (self.rect().centerx + 4 - offset[0], self.rect().centery - offset[1]))
 
+
+class Money(PhysicsEntity):
+    def __init__(self, game, pos, value = 1, size=(16, 16)):
+        super().__init__(game, 'money', pos, size)
+        self.set_action('idle')  # Use your money animation
+        self.value = value
+
+    def update(self, tilemap, movement=(0, 0)):
+        super().update(tilemap, movement=(0, 0))  # No movement
+        # Check collision with player
+        if self.rect().colliderect(self.game.player.rect()):
+            # Add money to player, play sound, etc.
+            self.game.player_state['upgrades']["money"] += self.value
+            return True  # Signal to remove this entity
+        return False
+    
+
 class Player(PhysicsEntity):
     def __init__(self, game, pos, size, screen_size):
         super().__init__(game, 'player', pos, size)
