@@ -1,5 +1,5 @@
 {
-    "level": 1,
+    "level": 0,
     "inventory": {
         "Breifcase Collection": [],
         "Tie Collection": [],
@@ -9,7 +9,7 @@
     },
     "equipped": {},
     "upgrades": {
-        "money": 3,
+        "money": 0,
         "breifcaseLevel": 0,
         "tieLevel": 0,
         "suitLevel": 0,

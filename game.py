@@ -47,7 +47,7 @@ class Game:
             'wood': load_images('tiles/wood'),
             'concrete': load_images_with_black('tiles/concrete'),
 
-            'buildings': load_images('tiles/buildings'),
+            'buildings': load_images_with_black('tiles/buildings'),
             'large_decor': load_images('tiles/large_decor'),
             'stone': load_images('tiles/stone'),
             'player': load_image('entities/player.png'),
