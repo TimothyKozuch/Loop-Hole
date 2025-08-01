@@ -8,7 +8,7 @@ import pygame
 import json
 
 from scripts.utils import load_image, load_images, load_image_with_black, load_images_with_black, Animation
-from scripts.entities import PhysicsEntity, Player, Enemy, Friend
+from scripts.entities import PhysicsEntity, Player, Enemy, Friend, Judge
 from scripts.tilemap import Tilemap
 from scripts.clouds import Clouds
 from scripts.particle import Particle
@@ -56,6 +56,9 @@ class Game:
             
             'enemy/idle': Animation(load_images_with_black('entities/enemy/idle'), img_dur=6),
             'enemy/run': Animation(load_images_with_black('entities/enemy/run'), img_dur=4),
+
+            'judge/idle': Animation(load_images_with_black('entities/judge/idle'), img_dur=6),
+            'judge/run': Animation(load_images_with_black('entities/judge/run'), img_dur=10),
 
             'friend/idle': Animation(load_images_with_black('entities/friend/idle'), img_dur=6),
             'friend/closest_friend': Animation(load_images_with_black('entities/friend/closest_friend'), img_dur=10),
@@ -143,17 +146,17 @@ class Game:
         self.money = []
         self.shop_open = False
 
-
-
         #replaces each of the spawners with its character
         for spawner in self.tilemap.extract([('spawners', i) for i in range(len(os.listdir('data/images/tiles/spawners')))]):
             if spawner['variant'] == 0:
                 self.player.pos = spawner['pos']
                 self.player.air_time = 0
             elif spawner['variant'] == 1:
-                self.enemies.append(Enemy(self, spawner['pos'], (16, 29)))
+                self.enemies.append(Enemy(self, 'enemy', spawner['pos'], (16, 29)))
             elif spawner['variant'] == 2:
                 self.friends.append(Friend(self,spawner['pos'],(16, 29), Level_Dialogue, 'Accountant'))
+            elif spawner['variant'] == 3:
+                self.enemies.append(Judge(self, spawner['pos'], (16, 35)))
             
         self.projectiles = []
         self.particles = []

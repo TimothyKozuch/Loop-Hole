@@ -152,8 +152,9 @@ class Friend(PhysicsEntity):
                 return True
 
 class Enemy(PhysicsEntity):
-    def __init__(self, game, pos, size):
-        super().__init__(game, 'enemy', pos, size)
+    def __init__(self, game, type, pos, size):
+        self.type = type
+        super().__init__(game, str(self.type), pos, size)
         
         self.walking = 0
         
@@ -214,6 +215,9 @@ class Enemy(PhysicsEntity):
         else:
             surf.blit(self.game.assets['gun'], (self.rect().centerx + 4 - offset[0], self.rect().centery - offset[1]))
 
+class Judge(Enemy):
+    def __init__(self, game, pos, size):
+        super().__init__(game, 'judge', pos, size)
 
 class Money(PhysicsEntity):
     def __init__(self, game, pos, value = 1, size=(16, 16)):
@@ -226,7 +230,7 @@ class Money(PhysicsEntity):
         # Check collision with player
         if self.rect().colliderect(self.game.player.rect()):
             # Add money to player, play sound, etc.
-            self.game.player_state["money"] += self.value
+            self.game.player_state["money"] += self.value*self.game.player_state["upgrades"]["moneyLevel/moneyFrequency/moneyValue"]
             return True  # Signal to remove this entity
         return False
     
