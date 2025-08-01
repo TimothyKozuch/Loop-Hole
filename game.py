@@ -45,16 +45,18 @@ class Game:
             'grass': load_images('tiles/grass'),
             'wood': load_images('tiles/wood'),
 
+            'buildings': load_images('tiles/buildings'),
             'large_decor': load_images('tiles/large_decor'),
             'stone': load_images('tiles/stone'),
             'player': load_image('entities/player.png'),
             'background': load_image('background.png'),
             'clouds': load_images('clouds'),
+            
             'enemy/idle': Animation(load_images('entities/enemy/idle'), img_dur=6),
             'enemy/run': Animation(load_images('entities/enemy/run'), img_dur=4),
 
-            #'friend/idle': Animation(load_images('entities/friend/idle'), img_dur=6),
-            #'friend/closest_friend': Animation(load_images('entities/friend/closest_friend'), img_dur=10),
+            'friend/idle': Animation(load_images('entities/friend/idle'), img_dur=6),
+            'friend/closest_friend': Animation(load_images('entities/friend/closest_friend'), img_dur=10),
 
             'player/idle': Animation(load_images_with_black('entities/player/idle'), img_dur=6),
             'player/run': Animation(load_images_with_black('entities/player/run'), img_dur=4),
@@ -63,7 +65,7 @@ class Game:
             'player/wall_slide': Animation(load_images_with_black('entities/player/wall_slide')),
 
             'particle/leaf': Animation(load_images('particles/leaf'), img_dur=20, loop=False),
-            #'particle/paper': Animation(load_images('particles/paper'), img_dur=20, loop=False),
+            'particle/paper': Animation(load_images('particles/paper'), img_dur=20, loop=False),
             'particle/particle': Animation(load_images('particles/particle'), img_dur=6, loop=False),
             'gun': load_image('gun.png'),
             'projectile': load_image('projectile.png'),
@@ -125,7 +127,7 @@ class Game:
             self.leaf_spawners.append(pygame.Rect(4 + tree['pos'][0], 4 + tree['pos'][1], 23, 13))
             
         self.enemies = []
-        #self.friends = []
+        self.friends = []
 
         f = open('data/story/'+ str(map_id)+'.json', 'r')
         Level_Dialogue = json.load(f)
@@ -215,9 +217,9 @@ class Game:
                     pos = (rect.x + random.random() * rect.width, rect.y + random.random() * rect.height)
                     self.particles.append(Particle(self, 'leaf', pos, velocity=[-0.1, 0.3], frame=random.randint(0, 20)))
             
-            #if random.random() * 49999 < self.player.rect.width * self.player.rect.height:
-            #        pos = (self.player.rect.x + random.random() * self.player.rect.width, self.player.rect.y + random.random() * self.player.rect.height)
-            #        self.particles.append(Particle(self, 'paper', pos, velocity=[-0.1, 0.3], frame=random.randint(0, 20)))
+            if random.random() * 49999 < self.player.rect().width * self.player.rect().height:
+                    pos = (self.player.rect().x + random.random() * self.player.rect().width, self.player.rect().y + random.random() * self.player.rect().height)
+                    self.particles.append(Particle(self, 'paper', pos, velocity=[-0.1, 0.3], frame=random.randint(0, 20)))
 
             self.clouds.update()
             self.clouds.render(self.display_2, offset=render_scroll)
@@ -230,13 +232,13 @@ class Game:
                 if kill:
                     self.enemies.remove(enemy)
             
-            #for friend in self.friends.copy():
-            #    kill = friend.update(self.tilemap, (0, 0))
-            #    friend.render(self.display, offset=render_scroll)
-            #    if kill:
-            #        print(friend.woah())
+            for friend in self.friends.copy():
+                kill = friend.update(self.tilemap, (0, 0))
+                friend.render(self.display, offset=render_scroll)
+                if kill:
+                    print(friend.woah())
                     
-            #self.closestFriend = self.player.closestFriend(self.display, offset=render_scroll) #interact icon
+            self.closestFriend = self.player.closestFriend(self.display, offset=render_scroll) #interact icon
             
 
 
