@@ -94,8 +94,7 @@ class Game:
 
         self.tilemap = Tilemap(self, tile_size=16)
         
-        self.level = 0
-        self.load_level(self.level)
+        self.load_level()
         
         self.screenshake = 0
 
@@ -115,7 +114,17 @@ class Game:
     def equipped(self):
         return self.player_state.get('equipped')
         
-    def load_level(self, map_id):
+    def load_level(self):
+
+        
+        f = open('data/story/Player.json', 'r')
+        self.player_state = json.load(f)
+        f.close()
+        
+        f = open('data/story/'+ str(self.player_state["level"]) +'.json', 'r')
+        Level_Dialogue = json.load(f)
+        f.close
+
         
         pygame.mixer.music.load('data/music.wav')
         pygame.mixer.music.set_volume(0.5)
@@ -123,7 +132,7 @@ class Game:
         self.sfx['ambience'].play(-1)
         pygame.mixer.pause()
 
-        self.tilemap.load('data/maps/' + str(map_id) + '.json')
+        self.tilemap.load('data/maps/' + str(self.player_state["level"]) + '.json')
         
         self.leaf_spawners = []
         for tree in self.tilemap.extract([('large_decor', 2)], keep=True):
@@ -135,13 +144,6 @@ class Game:
         self.shop_open = False
 
 
-        f = open('data/story/'+ str(map_id)+'.json', 'r')
-        Level_Dialogue = json.load(f)
-        f.close
-
-        f = open('data/story/Player.json', 'r')
-        self.player_state = json.load(f)
-        f.close()
 
         #replaces each of the spawners with its character
         for spawner in self.tilemap.extract([('spawners', i) for i in range(len(os.listdir('data/images/tiles/spawners')))]):
@@ -162,18 +164,19 @@ class Game:
         self.transition = -30
 
     def endLevel(self):
-
-        f = open('data/story/Player.json', 'w')
-        json.dump(self.player_state,f, indent=4)
-        f.close()
-
-        print("saved flags")
+        
         transitioning = True
         while transitioning:
             self.transition += 1
             if self.transition > 30:
-                self.level = min(self.level + 1, len(os.listdir('data/maps')) - 1)
-                self.load_level(self.level)
+                self.player_state["level"] = min(self.player_state["level"] + 1, len(os.listdir('data/maps')) - 1)
+
+                f = open('data/story/Player.json', 'w')
+                json.dump(self.player_state,f, indent=4)
+                f.close()
+                print("saved flags")
+                
+                self.load_level()
                 transitioning = False
 
     def draw_multiline_text(self,screen, text, font, color, x, y, line_spacing=5):
@@ -207,7 +210,7 @@ class Game:
                 if self.dead >= 10:
                     self.transition = min(30, self.transition + 1)
                 if self.dead > 40:
-                    self.load_level(self.level)
+                    self.load_level()
             
             self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[0]) / 30
             self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1]) / 30
