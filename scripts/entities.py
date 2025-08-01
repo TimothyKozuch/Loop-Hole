@@ -310,7 +310,7 @@ class Player(PhysicsEntity):
                 icon = icon_anim
             friend_rect = closest.rect()
             icon_x = friend_rect.centerx - offset[0] - icon.get_width() // 2
-            icon_y = friend_rect.top - offset[1] - icon.get_height()+10  # 4px above head
+            icon_y = friend_rect.top - offset[1] - icon.get_height()-4  # 4px above head
             surf.blit(icon, (icon_x, icon_y))
         return closest
 

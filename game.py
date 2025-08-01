@@ -88,7 +88,7 @@ class Game:
         
         self.clouds = Clouds(self.assets['clouds'], count=16)
         #8,15
-        self.player = Player(self, (50, 50), (16, 30),[self.info.current_w,self.info.current_h])
+        self.player = Player(self, (50, 50), (16, 29),[self.info.current_w,self.info.current_h])
 
         self.tilemap = Tilemap(self, tile_size=16)
         
@@ -128,6 +128,8 @@ class Game:
             
         self.enemies = []
         self.friends = []
+        self.shop_open = False
+
 
         f = open('data/story/'+ str(map_id)+'.json', 'r')
         Level_Dialogue = json.load(f)
@@ -145,7 +147,7 @@ class Game:
             elif spawner['variant'] == 1:
                 self.enemies.append(Enemy(self, spawner['pos'], (8, 15)))
             elif spawner['variant'] == 2:
-                self.friends.append(Friend(self,spawner['pos'],(28, 30), Level_Dialogue, 'Accountant'))
+                self.friends.append(Friend(self,spawner['pos'],(16, 29), Level_Dialogue, 'Accountant'))
             
         self.projectiles = []
         self.particles = []
@@ -785,10 +787,112 @@ class Game:
 
             y_offset += len(team_list) * row_height + 20
 
-    def openShop(self):
-        print("open shop")
-
     def addother(self):
         pass
     
+    def openShop(self):
+        self.shop_open = True
+        self.shop_menu()
+        self.shop_open = False
+
+    def shop_menu(self):
+        shop_running = True
+        clock = pygame.time.Clock()
+        sw, sh = self.screen.get_size()
+        exit_btn_rect = pygame.Rect(sw // 2 - 80, sh - 120, 160, 50)
+
+        # Prepare inventory and upgrades
+        inventory_data = self.inventory  # dict of collections
+        upgrades_data = self.upgrades    # dict of upgrades
+
+        # Layout
+        col_width = sw // 3
+        col_spacing = 40
+        y_start = 120
+        button_height = 40
+
+        while shop_running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    mx, my = pygame.mouse.get_pos()
+                    # Exit button
+                    if exit_btn_rect.collidepoint(mx, my):
+                        shop_running = False
+                    # Inventory buttons
+                    y_offset = y_start
+                    for idx, (collection, items) in enumerate(inventory_data.items()):
+                        x = col_spacing
+                        for item_idx, item in enumerate(items):
+                            btn_rect = pygame.Rect(x, y_offset, col_width - 2 * col_spacing, button_height)
+                            if btn_rect.collidepoint(mx, my):
+                                print(f"Clicked inventory item: {item} in {collection}")
+                            y_offset += button_height + 10
+                        y_offset += 20
+                    # Upgrades buttons
+                    y_offset = y_start
+                    x = sw // 2 + col_spacing
+                    for idx, (upgrade, value) in enumerate(upgrades_data.items()):
+                        btn_rect = pygame.Rect(x, y_offset, col_width - 2 * col_spacing, button_height)
+                        if btn_rect.collidepoint(mx, my):
+                            print(f"Clicked upgrade: {upgrade} (level {value})")
+                        y_offset += button_height + 10
+
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        shop_running = False
+
+            # --- Drawing ---
+            scaled = pygame.transform.scale(self.display, self.screen.get_size())
+            self.screen.blit(scaled, (0, 0))
+            overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 180))
+            self.screen.blit(overlay, (0, 0))
+
+            # Shop header
+            shop_header = self.font.render("Shop", True, (255, 255, 0))
+            self.screen.blit(shop_header, (sw // 2 - shop_header.get_width() // 2, 40))
+
+            # Inventory column
+            x = col_spacing
+            y_offset = y_start
+            inv_header = self.font.render("Inventory", True, (255, 255, 255))
+            self.screen.blit(inv_header, (x, y_offset - 40))
+            for collection, items in inventory_data.items():
+                col_text = self.font.render(f"{collection}:", True, (180, 220, 255))
+                self.screen.blit(col_text, (x, y_offset))
+                y_offset += 30
+                for item in items:
+                    btn_rect = pygame.Rect(x, y_offset, col_width - 2 * col_spacing, button_height)
+                    pygame.draw.rect(self.screen, (80, 120, 180), btn_rect)
+                    pygame.draw.rect(self.screen, (255, 255, 255), btn_rect, 2)
+                    item_text = self.font.render(str(item), True, (255, 255, 255))
+                    self.screen.blit(item_text, (btn_rect.x + 10, btn_rect.y + 8))
+                    y_offset += button_height + 10
+                y_offset += 20
+
+            # Upgrades column
+            x = sw // 2 + col_spacing
+            y_offset = y_start
+            upg_header = self.font.render("Upgrades", True, (255, 255, 255))
+            self.screen.blit(upg_header, (x, y_offset - 40))
+            for upgrade, value in upgrades_data.items():
+                btn_rect = pygame.Rect(x, y_offset, col_width - 2 * col_spacing, button_height)
+                pygame.draw.rect(self.screen, (120, 180, 120), btn_rect)
+                pygame.draw.rect(self.screen, (255, 255, 255), btn_rect, 2)
+                upg_text = self.font.render(f"{upgrade}: {value}", True, (255, 255, 255))
+                self.screen.blit(upg_text, (btn_rect.x + 10, btn_rect.y + 8))
+                y_offset += button_height + 10
+
+            # Exit Shop button
+            pygame.draw.rect(self.screen, (180, 60, 60), exit_btn_rect)
+            pygame.draw.rect(self.screen, (255, 255, 255), exit_btn_rect, 2)
+            exit_text = self.font.render("Exit Shop", True, (255, 255, 255))
+            self.screen.blit(exit_text, (exit_btn_rect.x + 20, exit_btn_rect.y + 10))
+
+            pygame.display.update()
+            clock.tick(60)
+
 Game().run()
