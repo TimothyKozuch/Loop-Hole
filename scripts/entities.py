@@ -227,7 +227,6 @@ class Money(PhysicsEntity):
             return True  # Signal to remove this entity
         return False
     
-
 class Player(PhysicsEntity):
     def __init__(self, game, pos, size, screen_size):
         super().__init__(game, 'player', pos, size)
