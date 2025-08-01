@@ -54,8 +54,8 @@ class Game:
             'background': load_image('background.png'),
             'clouds': load_images('clouds'),
             
-            'enemy/idle': Animation(load_images('entities/enemy/idle'), img_dur=6),
-            'enemy/run': Animation(load_images('entities/enemy/run'), img_dur=4),
+            'enemy/idle': Animation(load_images_with_black('entities/enemy/idle'), img_dur=6),
+            'enemy/run': Animation(load_images_with_black('entities/enemy/run'), img_dur=4),
 
             'friend/idle': Animation(load_images_with_black('entities/friend/idle'), img_dur=6),
             'friend/closest_friend': Animation(load_images_with_black('entities/friend/closest_friend'), img_dur=10),
@@ -151,7 +151,7 @@ class Game:
                 self.player.pos = spawner['pos']
                 self.player.air_time = 0
             elif spawner['variant'] == 1:
-                self.enemies.append(Enemy(self, spawner['pos'], (8, 15)))
+                self.enemies.append(Enemy(self, spawner['pos'], (16, 29)))
             elif spawner['variant'] == 2:
                 self.friends.append(Friend(self,spawner['pos'],(16, 29), Level_Dialogue, 'Accountant'))
             
@@ -174,8 +174,8 @@ class Game:
                 f = open('data/story/Player.json', 'w')
                 json.dump(self.player_state,f, indent=4)
                 f.close()
-                print("saved flags")
-                
+                print("saved")
+
                 self.load_level()
                 transitioning = False
 

@@ -159,7 +159,9 @@ class Enemy(PhysicsEntity):
         
     def update(self, tilemap, movement=(0, 0)):
         if self.walking:
-            if tilemap.solid_check((self.rect().centerx + (-7 if self.flip else 7), self.pos[1] + 23)):
+            foot_y = self.pos[1] + self.size[1]  # bottom of enemy
+            side_x = self.rect().centerx + (-self.size[0] // 2 if self.flip else self.size[0] // 2)
+            if tilemap.solid_check((side_x, foot_y + 2)):  # +2 to check just below the feet
                 if (self.collisions['right'] or self.collisions['left']):
                     self.flip = not self.flip
                 else:
@@ -180,6 +182,7 @@ class Enemy(PhysicsEntity):
                         self.game.projectiles.append([[self.rect().centerx + 7, self.rect().centery], 1.5, 0])
                         for i in range(4):
                             self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random()))
+
         elif random.random() < 0.01:
             self.walking = random.randint(30, 120)
         
