@@ -851,9 +851,15 @@ class Game:
                     y_offset = y_start
                     x = sw // 2 + col_spacing
                     for idx, (upgrade, value) in enumerate(upgrades_data.items()):
+                        cost = 10 * (value + 1)  # Example cost formula
                         btn_rect = pygame.Rect(x, y_offset, col_width - 2 * col_spacing, button_height)
                         if btn_rect.collidepoint(mx, my):
-                            print(f"Clicked upgrade: {upgrade} (level {value})")
+                            if self.player_state["money"] >= cost:
+                                upgrades_data[upgrade] += 1
+                                self.player_state["money"] -= cost
+                                print(f"Upgraded {upgrade} to level {upgrades_data[upgrade]}")
+                            else:
+                                print("Not enough money!")
                         y_offset += button_height + 10
 
                 elif event.type == pygame.KEYDOWN:
@@ -866,6 +872,21 @@ class Game:
             overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
             overlay.fill((0, 0, 0, 180))
             self.screen.blit(overlay, (0, 0))
+
+            # Money display (top right)
+            money_img = self.assets['money/idle'].img()
+            base_w, base_h = 320, 180
+            scale_x = sw / base_w
+            scale_y = sh / base_h
+            scale = min(scale_x, scale_y)
+            scaled_size = (int(money_img.get_width() * scale), int(money_img.get_height() * scale))
+            money_img_scaled = pygame.transform.scale(money_img, scaled_size)
+            img_x = sw - money_img_scaled.get_width() - 30
+            img_y = 30
+            self.screen.blit(money_img_scaled, (img_x, img_y))
+            money_count = self.player_state["money"]
+            money_text = self.font.render(str(money_count), True, (255, 255, 0))
+            self.screen.blit(money_text, (img_x - money_text.get_width() - 10, img_y + money_img_scaled.get_height() // 2 - money_text.get_height() // 2))
 
             # Shop header
             shop_header = self.font.render("Shop", True, (255, 255, 0))
@@ -895,11 +916,15 @@ class Game:
             upg_header = self.font.render("Upgrades", True, (255, 255, 255))
             self.screen.blit(upg_header, (x, y_offset - 40))
             for upgrade, value in upgrades_data.items():
+                cost = 10 * (value + 1)  # Example cost formula
                 btn_rect = pygame.Rect(x, y_offset, col_width - 2 * col_spacing, button_height)
                 pygame.draw.rect(self.screen, (120, 180, 120), btn_rect)
                 pygame.draw.rect(self.screen, (255, 255, 255), btn_rect, 2)
                 upg_text = self.font.render(f"{upgrade}: {value}", True, (255, 255, 255))
                 self.screen.blit(upg_text, (btn_rect.x + 10, btn_rect.y + 8))
+                # Draw cost on the right side of the button
+                cost_text = self.font.render(f"Cost: {cost}", True, (255, 255, 0))
+                self.screen.blit(cost_text, (btn_rect.right - cost_text.get_width() - 10, btn_rect.y + 8))
                 y_offset += button_height + 10
 
             # Exit Shop button
@@ -928,7 +953,7 @@ class Game:
         img_x = sw - money_img_scaled.get_width() - 30
         img_y = 30
         self.screen.blit(money_img_scaled, (img_x, img_y))
-        money_count = self.player_state['upgrades']["money"]
+        money_count = self.player_state["money"]
         money_text = self.font.render(str(money_count), True, (255, 255, 0))
         self.screen.blit(money_text, (img_x - money_text.get_width() - 10, img_y + money_img_scaled.get_height() // 2 - money_text.get_height() // 2))
         

@@ -226,7 +226,7 @@ class Money(PhysicsEntity):
         # Check collision with player
         if self.rect().colliderect(self.game.player.rect()):
             # Add money to player, play sound, etc.
-            self.game.player_state['upgrades']["money"] += self.value
+            self.game.player_state["money"] += self.value
             return True  # Signal to remove this entity
         return False
     
