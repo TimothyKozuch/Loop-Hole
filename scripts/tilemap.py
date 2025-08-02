@@ -14,7 +14,15 @@ AUTOTILE_MAP = {
     tuple(sorted([(1, 0), (-1, 0), (0, 1), (0, -1)])): 8,
 }
 
-NEIGHBOR_OFFSETS = [(-1, 0), (-1, -1), (0, -1), (1, -1), (2,-1), (1, 0), (2,0), (0, 0), (-1, 1), (-1,2), (0, 1), (0,2), (1, 1), (2,2), (1,2), (2,1)]
+NEIGHBOR_OFFSETS = [
+    (-1, -1), (0, -1), (1, -1),  # Top row
+    (-1, 0),  (0, 0),  (1, 0),   # Middle row
+    (-1, 1),  (0, 1),  (1, 1),   # Bottom row
+    (-1, 2),  (0, 2),  (1, 2),   # Two tiles down
+    (-1, 3),  (0, 3),  (1, 3),   # Three tiles down
+    (-1, 4),  (0, 4),  (1, 4),   # Four tiles down
+]
+
 PHYSICS_TILES = {'grass', 'stone', 'wood','concrete'}
 AUTOTILE_TYPES = {'grass', 'stone','wood'}
 

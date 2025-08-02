@@ -57,7 +57,7 @@ class Game:
             'enemy/idle': Animation(load_images_with_black('entities/enemy/idle'), img_dur=6),
             'enemy/run': Animation(load_images_with_black('entities/enemy/run'), img_dur=4),
 
-            'judge/idle': Animation(load_images_with_black('entities/judge/idle'), img_dur=6),
+            'judge/idle': Animation(load_images_with_black('entities/judge/idle'), img_dur=15),
             'judge/run': Animation(load_images_with_black('entities/judge/run'), img_dur=10),
 
             'friend/idle': Animation(load_images_with_black('entities/friend/idle'), img_dur=6),
@@ -118,7 +118,6 @@ class Game:
         return self.player_state.get('equipped')
         
     def load_level(self):
-
         
         f = open('data/story/Player.json', 'r')
         self.player_state = json.load(f)
@@ -127,7 +126,6 @@ class Game:
         f = open('data/story/'+ str(self.player_state["level"]) +'.json', 'r')
         Level_Dialogue = json.load(f)
         f.close
-
         
         pygame.mixer.music.load('data/music.wav')
         pygame.mixer.music.set_volume(0.5)
@@ -156,7 +154,7 @@ class Game:
             elif spawner['variant'] == 2:
                 self.friends.append(Friend(self,spawner['pos'],(16, 29), Level_Dialogue, 'Accountant'))
             elif spawner['variant'] == 3:
-                self.enemies.append(Judge(self, spawner['pos'], (16, 35)))
+                self.enemies.append(Judge(self, spawner['pos'], (16, 60)))
             
         self.projectiles = []
         self.particles = []

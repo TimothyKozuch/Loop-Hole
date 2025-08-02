@@ -155,7 +155,7 @@ class Enemy(PhysicsEntity):
     def __init__(self, game, type, pos, size):
         self.type = type
         super().__init__(game, str(self.type), pos, size)
-        
+        self.flip = not self.flip
         self.walking = 0
         
     def update(self, tilemap, movement=(0, 0)):
@@ -170,19 +170,20 @@ class Enemy(PhysicsEntity):
             else:
                 self.flip = not self.flip
             self.walking = max(0, self.walking - 1)
-            if not self.walking:
-                dis = (self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
-                if (abs(dis[1]) < 16):
-                    if (self.flip and dis[0] < 0):
-                        self.game.sfx['shoot'].play()
-                        self.game.projectiles.append([[self.rect().centerx - 7, self.rect().centery], -1.5, 0])
-                        for i in range(4):
-                            self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random()))
-                    if (not self.flip and dis[0] > 0):
-                        self.game.sfx['shoot'].play()
-                        self.game.projectiles.append([[self.rect().centerx + 7, self.rect().centery], 1.5, 0])
-                        for i in range(4):
-                            self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random()))
+            if self.type == 'enemy':
+                if not self.walking:
+                    dis = (self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
+                    if (abs(dis[1]) < 16):
+                        if (self.flip and dis[0] < 0):
+                            self.game.sfx['shoot'].play()
+                            self.game.projectiles.append([[self.rect().centerx - 7, self.rect().centery], -1.5, 0])
+                            for i in range(4):
+                                self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random()))
+                        if (not self.flip and dis[0] > 0):
+                            self.game.sfx['shoot'].play()
+                            self.game.projectiles.append([[self.rect().centerx + 7, self.rect().centery], 1.5, 0])
+                            for i in range(4):
+                                self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random()))
 
         elif random.random() < 0.01:
             self.walking = random.randint(30, 120)
@@ -209,11 +210,11 @@ class Enemy(PhysicsEntity):
             
     def render(self, surf, offset=(0, 0)):
         super().render(surf, offset=offset)
-        
-        if self.flip:
-            surf.blit(pygame.transform.flip(self.game.assets['gun'], True, False), (self.rect().centerx - 4 - self.game.assets['gun'].get_width() - offset[0], self.rect().centery - offset[1]))
-        else:
-            surf.blit(self.game.assets['gun'], (self.rect().centerx + 4 - offset[0], self.rect().centery - offset[1]))
+        if self.type == 'enemy':
+            if self.flip:
+                surf.blit(pygame.transform.flip(self.game.assets['gun'], True, False), (self.rect().centerx - 4 - self.game.assets['gun'].get_width() - offset[0], self.rect().centery - offset[1]))
+            else:
+                surf.blit(self.game.assets['gun'], (self.rect().centerx + 4 - offset[0], self.rect().centery - offset[1]))
 
 class Judge(Enemy):
     def __init__(self, game, pos, size):
