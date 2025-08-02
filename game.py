@@ -149,6 +149,7 @@ class Game:
             if spawner['variant'] == 0:
                 self.player.pos = spawner['pos']
                 self.player.air_time = 0
+                self.player_dialogue = Level_Dialogue['dialogueTree']['Lawyer']['start']
             elif spawner['variant'] == 1:
                 self.enemies.append(Enemy(self, 'enemy', spawner['pos'], (16, 29)))
             elif spawner['variant'] == 2:
@@ -185,7 +186,6 @@ class Game:
         for i, line in enumerate(lines):
             text_surface = font.render(line, True, color)
             screen.blit(text_surface, (x, y + i * (font.get_height() + line_spacing)))
-    
 
     def run(self):
         self.running = True
@@ -388,6 +388,9 @@ class Game:
             self.screen.blit(pygame.transform.scale(self.display_2, self.screen.get_size()), screenshake_offset)
 
             # Draw the dialogue text
+            speaker = self.player_dialogue.get('speaker', 'Player')
+            text = self.player_dialogue.get('text', '...')
+            self.screen.blit(self.font.render(speaker + ": " + text , True, (0, 0, 0)), (0, 0))
             self.draw_multiline_text(self.screen, self.current_dialogue, self.font, (0,0,0), 0, 0)
 
             self.render_hud()
