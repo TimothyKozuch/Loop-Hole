@@ -68,6 +68,7 @@ class Game:
             'player/idle': Animation(load_images_with_black('entities/player/idle'), img_dur=6),
             'player/run': Animation(load_images_with_black('entities/player/run'), img_dur=4),
             'player/jump': Animation(load_images_with_black('entities/player/jump'),img_dur=1,loop=False),
+            'player/throw': Animation(load_images_with_black('entities/player/throw'),img_dur=4,loop=False),
             'player/slide': Animation(load_images_with_black('entities/player/slide')),
             'player/wall_slide': Animation(load_images_with_black('entities/player/wall_slide')),
             'money/idle': Animation(load_images_with_black('entities/money/idle'), img_dur=6),
@@ -76,7 +77,7 @@ class Game:
             'particle/paper': Animation(load_images('particles/paper'), img_dur=20, loop=False),
             'particle/particle': Animation(load_images('particles/particle'), img_dur=6, loop=False),
             'gun': load_image('gun.png'),
-            'projectile': load_image('projectile.png'),
+            'breifcase': load_image_with_black('breifcase.png'),
         }
         
         self.sfx = {
@@ -240,9 +241,7 @@ class Game:
                 if kill:
                     self.lootMoney(enemy.rect().center)
                     self.enemies.remove(enemy)
-            
-            
-            
+        
             for friend in self.friends.copy():
                 kill = friend.update(self.tilemap, (0, 0))
                 friend.render(self.display, offset=render_scroll)
@@ -265,7 +264,7 @@ class Game:
             for projectile in self.projectiles.copy():
                 projectile[0][0] += projectile[1]
                 projectile[2] += 1
-                img = self.assets['projectile']
+                img = self.assets['breifcase']
                 self.display.blit(img, (projectile[0][0] - img.get_width() / 2 - render_scroll[0], projectile[0][1] - img.get_height() / 2 - render_scroll[1]))
                 if self.tilemap.solid_check(projectile[0]):
                     self.projectiles.remove(projectile)

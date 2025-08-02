@@ -345,7 +345,7 @@ class Judge(Enemy):
             self.gavel_effect_pos = (new_x, new_y)
             
             # Check if gavel has moved past judge's y coordinate
-            if new_y > self.pos[1]+16:
+            if new_y > self.pos[1]+48:
                 self.gavel_effect_pos = None
                 self.gavel_effect_timer = 0
             else:
@@ -492,7 +492,6 @@ class Judge(Enemy):
 
         return super().handle_collision_with_player()
     
-
 class Money(PhysicsEntity):
     def __init__(self, game, pos, value = 1, size=(16, 16)):
         super().__init__(game, 'money', pos, size)
@@ -517,7 +516,8 @@ class Player(PhysicsEntity):
         self.wall_slide = False
         self.dashing = 0
         self.jumps = self.max_jumps
-
+        self.throwingDuration = len(game.assets['player/throw'].images) * game.assets['player/throw'].img_duration-3
+        self.throwing = 0
         self.screen_size = screen_size
         self.interacting = False
         self.selecting = 0
@@ -529,10 +529,10 @@ class Player(PhysicsEntity):
         self.air_time += 1
         
         #kills you if you are falling for 2 seconds
-        # if self.air_time > 120:
-        #     if not self.game.dead:
-        #         self.game.screenshake = max(16, self.game.screenshake)
-        #     self.game.dead += 1
+        if self.air_time > 180:
+            if not self.game.dead:
+                self.game.screenshake = max(16, self.game.screenshake)
+            self.game.dead += 1
         
         if self.collisions['down']:
             self.air_time = 0
@@ -549,7 +549,9 @@ class Player(PhysicsEntity):
             self.set_action('wall_slide')
 
         if not self.wall_slide:
-            if self.air_time > 4:
+            if self.throwing > 0:
+                self.throwing -= 1
+            elif self.air_time > 4:
                 self.set_action('jump')
             elif movement[0] != 0:
                 self.set_action('run')
@@ -584,7 +586,15 @@ class Player(PhysicsEntity):
         super().render(surf, offset=offset)
         if self.casting:
             print("casting")
-            
+    
+    def shoot_projectile(self, x_offset, velocity, angle):
+        self.game.sfx['shoot'].play()
+        direction = 10
+        if self.flip:
+            direction *= -1
+        self.game.projectiles.append([[self.rect().centerx + x_offset+ direction , self.rect().centery], velocity, 0])
+        for i in range(4):
+            self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + angle, 2 + random.random()))
             
     def closestFriend(self, surf, offset=(0, 0), max_distance=25):
         closest = None
@@ -610,6 +620,18 @@ class Player(PhysicsEntity):
             icon_y = friend_rect.top - offset[1] - icon.get_height()-4  # 4px above head
             surf.blit(icon, (icon_x, icon_y))
         return closest
+
+    def throw(self,value):
+        self.throwing = self.throwingDuration
+        self.set_action('throw')
+        self.shoot()
+        return True
+
+    def shoot(self):
+        if self.flip:
+            self.shoot_projectile(-7, -1.5, math.pi)
+        if not self.flip:
+            self.shoot_projectile(7, 1.5, 0)
 
 
     def jump(self,value,sensitivity = 0.2):

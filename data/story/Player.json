@@ -15,7 +15,7 @@
         "suitLevel": 0,
         "shoeLevel": 0,
         "rangedLevel": 0,
-        "moneyLevel/moneyFrequency/moneyValue": 0,
+        "moneyLevel/moneyFrequency/moneyValue": 1,
         "bribeLevel/judgeMaxHealth": 0,
         "carLevel/keyFrequency": 0
     },
@@ -114,7 +114,7 @@
                 "value": 1
             },
             "mouse_1": {
-                "action": "dash",
+                "action": "throw",
                 "value": 1
             },
             "mouse_2": {
