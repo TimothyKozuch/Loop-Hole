@@ -238,9 +238,57 @@ class Judge(Enemy):
     def __init__(self, game, pos, size):
         super().__init__(game, 'judge', pos, size)
         self.patrol_distance = 100
-        # Get animation frame count and duration
         self.run_anim_length = len(game.assets['judge/run'].images) * game.assets['judge/run'].img_duration
-        self.initial_flip = True  # Store initial facing direction
+        self.initial_flip = True
+        self.next_decision = 0
+        self.intro_played = False
+        # Set initial animation to intro
+        self.set_action('intro')
+
+    def update(self, tilemap, movement=(0, 0)):
+        if not self.intro_played:
+            # Make sure judge faces player during intro
+            self.flip = self.game.player.pos[0] < self.pos[0]
+            
+            # Update animation
+            self.animation.update()
+            
+            # Check if current image is the last one in the sequence
+            if self.animation.img() == self.game.assets['judge/intro'].images[-1]:
+                self.intro_played = True
+                self.set_action('idle')
+            return False
+
+        # Regular update logic after intro
+        player_dist_x = self.game.player.pos[0] - self.pos[0]
+        player_dist_y = self.game.player.pos[1] - self.pos[1]
+        distance = (player_dist_x ** 2 + player_dist_y ** 2) ** 0.5
+
+        if (self.action == 'idle' and 
+            self.animation.frame == 0 and 
+            not self.walking and 
+            self.next_decision <= 0):
+            
+            self.next_decision = self.game.assets['judge/idle'].img_duration * 2
+            
+            if distance <= 3 * self.game.tilemap.tile_size:
+                self.start_walking()
+            elif random.random() < 0.5:
+                self.start_walking()
+        
+        self.next_decision = max(0, self.next_decision - 1)
+
+        if self.walking:
+            movement = self.handle_movement(tilemap, movement)
+
+        super().update(tilemap, movement=movement)
+        
+        if self.walking:
+            self.set_action('run')
+        else:
+            self.set_action('idle')
+            
+        return self.handle_collision_with_player()
 
     def start_walking(self):
         # Make walking time a multiple of animation length
@@ -275,10 +323,11 @@ class Judge(Enemy):
     def handle_collision_with_player(self):
         # Check if we're in the attack frame of run animation by checking current image
         current_img = self.animation.img()
-        is_attack_frame = (self.action == 'run' and (current_img == self.game.assets['judge/run'].images[6] or 
-                                                    current_img == self.game.assets['judge/run'].images[7] or 
-                                                    current_img == self.game.assets['judge/run'].images[8] or 
-                                                    current_img == self.game.assets['judge/run'].images[9]))  # Adjust index for your attack frame
+        is_attack_frame = (self.action == 'run' and 
+                         current_img in [self.game.assets['judge/run'].images[6], 
+                                       self.game.assets['judge/run'].images[7],
+                                       self.game.assets['judge/run'].images[8],
+                                       self.game.assets['judge/run'].images[9]])
 
         if is_attack_frame and self.rect().colliderect(self.game.player.rect()):
             self.game.dead += 1

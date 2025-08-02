@@ -57,6 +57,7 @@ class Game:
             'enemy/idle': Animation(load_images_with_black('entities/enemy/idle'), img_dur=6),
             'enemy/run': Animation(load_images_with_black('entities/enemy/run'), img_dur=4),
 
+            'judge/intro': Animation(load_images_with_black('entities/judge/intro'), img_dur=4),
             'judge/idle': Animation(load_images_with_black('entities/judge/idle'), img_dur=15),
             'judge/run': Animation(load_images_with_black('entities/judge/run'), img_dur=10),
 
