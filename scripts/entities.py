@@ -219,6 +219,10 @@ class Enemy(PhysicsEntity):
             if self.rect().colliderect(self.game.player.rect()):
                 self.create_collision_effects()
                 return True
+        for projectile in self.game.projectiles.copy():
+            if self.rect().collidepoint(projectile[0]):
+                self.create_collision_effects()
+                return True
         return False
     
     def create_collision_effects(self):
