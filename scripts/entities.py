@@ -238,7 +238,9 @@ class Judge(Enemy):
     def __init__(self, game, pos, size):
         super().__init__(game, 'judge', pos, size)
         self.patrol_distance = 100
+        # Calculate proper animation cycle length
         self.run_anim_length = len(game.assets['judge/run'].images) * game.assets['judge/run'].img_duration
+        self.movement_speed = 0.7  # Same speed as parent Enemy class
         self.initial_flip = True
         self.next_decision = 0
         self.intro_played = False
@@ -269,9 +271,9 @@ class Judge(Enemy):
             not self.walking and 
             self.next_decision <= 0):
             
-            self.next_decision = self.game.assets['judge/idle'].img_duration * 2
+            self.next_decision = 60  # Fixed decision cooldown
             
-            if distance <= 3 * self.game.tilemap.tile_size:
+            if distance <= 100 * self.game.tilemap.tile_size:
                 self.start_walking()
             elif random.random() < 0.5:
                 self.start_walking()
@@ -291,7 +293,7 @@ class Judge(Enemy):
         return self.handle_collision_with_player()
 
     def start_walking(self):
-        # Make walking time a multiple of animation length
+        # Make walking time a multiple of animation length for complete cycles
         cycles = random.randint(2, 4)  # Run for 2-4 complete animation cycles
         self.walking = self.run_anim_length * cycles
         # Set initial direction based on player position
@@ -311,7 +313,8 @@ class Judge(Enemy):
                 self.flip = not self.flip
                 self.initial_flip = self.flip
             else:
-                movement = (movement[0] - 1 if self.flip else 1, movement[1])
+                # Use same speed as parent Enemy class (0.5) - set directly, don't add to existing movement
+                movement = (-self.movement_speed if self.flip else self.movement_speed, movement[1])
         else:
             # When reaching a ledge, reverse direction and store it
             self.flip = not self.flip
@@ -324,10 +327,12 @@ class Judge(Enemy):
         # Check if we're in the attack frame of run animation by checking current image
         current_img = self.animation.img()
         is_attack_frame = (self.action == 'run' and 
-                         current_img in [self.game.assets['judge/run'].images[6], 
+                         current_img in [self.game.assets['judge/run'].images[5],
+                                         self.game.assets['judge/run'].images[6], 
                                        self.game.assets['judge/run'].images[7],
                                        self.game.assets['judge/run'].images[8],
-                                       self.game.assets['judge/run'].images[9]])
+                                       self.game.assets['judge/run'].images[9],
+                                       self.game.assets['judge/run'].images[10]])
 
         if is_attack_frame and self.rect().colliderect(self.game.player.rect()):
             self.game.dead += 1
