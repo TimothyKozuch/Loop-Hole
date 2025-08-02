@@ -160,66 +160,140 @@ class Enemy(PhysicsEntity):
         
     def update(self, tilemap, movement=(0, 0)):
         if self.walking:
-            foot_y = self.pos[1] + self.size[1]  # bottom of enemy
-            side_x = self.rect().centerx + (-self.size[0] // 2 if self.flip else self.size[0] // 2)
-            if tilemap.solid_check((side_x, foot_y + 2)):  # +2 to check just below the feet
-                if (self.collisions['right'] or self.collisions['left']):
-                    self.flip = not self.flip
-                else:
-                    movement = (movement[0] - 0.5 if self.flip else 0.5, movement[1])
-            else:
-                self.flip = not self.flip
-            self.walking = max(0, self.walking - 1)
-            if self.type == 'enemy':
-                if not self.walking:
-                    dis = (self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
-                    if (abs(dis[1]) < 16):
-                        if (self.flip and dis[0] < 0):
-                            self.game.sfx['shoot'].play()
-                            self.game.projectiles.append([[self.rect().centerx - 7, self.rect().centery], -1.5, 0])
-                            for i in range(4):
-                                self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random()))
-                        if (not self.flip and dis[0] > 0):
-                            self.game.sfx['shoot'].play()
-                            self.game.projectiles.append([[self.rect().centerx + 7, self.rect().centery], 1.5, 0])
-                            for i in range(4):
-                                self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random()))
-
-        elif random.random() < 0.01:
-            self.walking = random.randint(30, 120)
+            movement = self.handle_movement(tilemap, movement)
+            self.handle_attack()
+        elif self.should_start_walking():
+            self.start_walking()
         
         super().update(tilemap, movement=movement)
+        self.update_animation(movement)
+        return self.handle_collision_with_player()
+    
+    def handle_movement(self, tilemap, movement):
+        foot_y = self.pos[1] + self.size[1]
+        side_x = self.rect().centerx + (-self.size[0] // 2 if self.flip else self.size[0] // 2)
         
+        if tilemap.solid_check((side_x, foot_y + 2)):
+            if (self.collisions['right'] or self.collisions['left']):
+                self.flip = not self.flip
+            else:
+                movement = (movement[0] - 0.5 if self.flip else 0.5, movement[1])
+        else:
+            self.flip = not self.flip
+            
+        self.walking = max(0, self.walking - 1)
+        return movement
+    
+    def handle_attack(self):
+        if self.type == 'enemy' and not self.walking:
+            dis = (self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
+            if (abs(dis[1]) < 16):
+                self.shoot(dis)
+    
+    def shoot(self, dis):
+        if (self.flip and dis[0] < 0):
+            self.shoot_projectile(-7, -1.5, math.pi)
+        if (not self.flip and dis[0] > 0):
+            self.shoot_projectile(7, 1.5, 0)
+    
+    def shoot_projectile(self, x_offset, velocity, angle):
+        self.game.sfx['shoot'].play()
+        self.game.projectiles.append([[self.rect().centerx + x_offset, self.rect().centery], velocity, 0])
+        for i in range(4):
+            self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + angle, 2 + random.random()))
+    
+    def should_start_walking(self):
+        return random.random() < 0.01
+    
+    def start_walking(self):
+        self.walking = random.randint(30, 120)
+    
+    def update_animation(self, movement):
         if movement[0] != 0:
             self.set_action('run')
         else:
             self.set_action('idle')
-            
+    
+    def handle_collision_with_player(self):
         if abs(self.game.player.dashing) >= 50:
             if self.rect().colliderect(self.game.player.rect()):
-                self.game.screenshake = max(16, self.game.screenshake)
-                self.game.sfx['hit'].play()
-                for i in range(30):
-                    angle = random.random() * math.pi * 2
-                    speed = random.random() * 5
-                    self.game.sparks.append(Spark(self.rect().center, angle, 2 + random.random()))
-                    self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle + math.pi) * speed * 0.5], frame=random.randint(0, 7)))
-                self.game.sparks.append(Spark(self.rect().center, 0, 5 + random.random()))
-                self.game.sparks.append(Spark(self.rect().center, math.pi, 5 + random.random()))
+                self.create_collision_effects()
                 return True
-            
-    def render(self, surf, offset=(0, 0)):
-        super().render(surf, offset=offset)
-        if self.type == 'enemy':
-            if self.flip:
-                surf.blit(pygame.transform.flip(self.game.assets['gun'], True, False), (self.rect().centerx - 4 - self.game.assets['gun'].get_width() - offset[0], self.rect().centery - offset[1]))
-            else:
-                surf.blit(self.game.assets['gun'], (self.rect().centerx + 4 - offset[0], self.rect().centery - offset[1]))
+        return False
+    
+    def create_collision_effects(self):
+        self.game.screenshake = max(16, self.game.screenshake)
+        self.game.sfx['hit'].play()
+        for i in range(30):
+            angle = random.random() * math.pi * 2
+            speed = random.random() * 5
+            self.game.sparks.append(Spark(self.rect().center, angle, 2 + random.random()))
+            self.game.particles.append(Particle(self.game, 'particle', self.rect().center, 
+                velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle + math.pi) * speed * 0.5], 
+                frame=random.randint(0, 7)))
+        self.game.sparks.append(Spark(self.rect().center, 0, 5 + random.random()))
+        self.game.sparks.append(Spark(self.rect().center, math.pi, 5 + random.random()))
 
 class Judge(Enemy):
     def __init__(self, game, pos, size):
         super().__init__(game, 'judge', pos, size)
+        self.patrol_distance = 100
+        # Get animation frame count and duration
+        self.run_anim_length = len(game.assets['judge/run'].images) * game.assets['judge/run'].img_duration
+        self.initial_flip = True  # Store initial facing direction
 
+    def start_walking(self):
+        # Make walking time a multiple of animation length
+        cycles = random.randint(2, 4)  # Run for 2-4 complete animation cycles
+        self.walking = self.run_anim_length * cycles
+        # Set initial direction based on player position
+        self.flip = self.game.player.pos[0] < self.pos[0]
+        self.initial_flip = self.flip  # Store the initial direction
+
+    def handle_movement(self, tilemap, movement):
+        # Use the stored initial direction instead of updating based on player position
+        self.flip = self.initial_flip
+
+        foot_y = self.pos[1] + self.size[1]
+        side_x = self.rect().centerx + (-self.size[0] // 2 if self.flip else self.size[0] // 2)
+        
+        if tilemap.solid_check((side_x, foot_y + 2)):
+            if (self.collisions['right'] or self.collisions['left']):
+                # When hitting a wall, reverse direction and store it
+                self.flip = not self.flip
+                self.initial_flip = self.flip
+            else:
+                movement = (movement[0] - 1 if self.flip else 1, movement[1])
+        else:
+            # When reaching a ledge, reverse direction and store it
+            self.flip = not self.flip
+            self.initial_flip = self.flip
+            
+        self.walking = max(0, self.walking - 1)
+        return movement
+
+    def handle_collision_with_player(self):
+        # Check if we're in the attack frame of run animation by checking current image
+        current_img = self.animation.img()
+        is_attack_frame = (self.action == 'run' and (current_img == self.game.assets['judge/run'].images[6] or 
+                                                    current_img == self.game.assets['judge/run'].images[7] or 
+                                                    current_img == self.game.assets['judge/run'].images[8] or 
+                                                    current_img == self.game.assets['judge/run'].images[9]))  # Adjust index for your attack frame
+
+        if is_attack_frame and self.rect().colliderect(self.game.player.rect()):
+            self.game.dead += 1
+            self.game.sfx['hit'].play()
+            self.game.screenshake = max(16, self.game.screenshake)
+            for i in range(30):
+                angle = random.random() * math.pi * 2
+                speed = random.random() * 5
+                self.game.sparks.append(Spark(self.game.player.rect().center, angle, 2 + random.random()))
+                self.game.particles.append(Particle(self.game, 'particle', self.game.player.rect().center, 
+                    velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle + math.pi) * speed * 0.5], 
+                    frame=random.randint(0, 7)))
+
+        return super().handle_collision_with_player()
+    
 class Money(PhysicsEntity):
     def __init__(self, game, pos, value = 1, size=(16, 16)):
         super().__init__(game, 'money', pos, size)
