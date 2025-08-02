@@ -240,65 +240,209 @@ class Judge(Enemy):
         self.patrol_distance = 100
         # Calculate proper animation cycle length
         self.run_anim_length = len(game.assets['judge/run'].images) * game.assets['judge/run'].img_duration
-        self.movement_speed = 0.7  # Same speed as parent Enemy class
+        self.idle_anim_length = len(game.assets['judge/idle'].images) * game.assets['judge/idle'].img_duration
+        self.movement_speed = 0.7
         self.initial_flip = True
-        self.next_decision = 0
-        self.intro_played = False
+        
+        # State management
+        self.state = 'intro'  # 'intro', 'idle', 'running', 'gavel_and_idle'
+        self.state_timer = 0
+        self.run_cycles_remaining = 0
+        
+        # Gavel effect
+        self.gavel_effect_pos = None
+        self.gavel_effect_timer = 0
+        
         # Set initial animation to intro
         self.set_action('intro')
 
     def update(self, tilemap, movement=(0, 0)):
-        if not self.intro_played:
-            # Make sure judge faces player during intro
-            self.flip = self.game.player.pos[0] < self.pos[0]
+        if self.state == 'intro':
+            return self.handle_intro_state()
+        elif self.state == 'idle':
+            return self.handle_idle_state(tilemap, movement)
+        elif self.state == 'running':
+            return self.handle_running_state(tilemap, movement)
+        elif self.state == 'gavel_and_idle':
+            return self.handle_gavel_and_idle_state()
             
-            # Update animation
-            self.animation.update()
-            
-            # Check if current image is the last one in the sequence
-            if self.animation.img() == self.game.assets['judge/intro'].images[-1]:
-                self.intro_played = True
-                self.set_action('idle')
-            return False
+        return False
 
-        # Regular update logic after intro
-        player_dist_x = self.game.player.pos[0] - self.pos[0]
-        player_dist_y = self.game.player.pos[1] - self.pos[1]
-        distance = (player_dist_x ** 2 + player_dist_y ** 2) ** 0.5
-
-        if (self.action == 'idle' and 
-            self.animation.frame == 0 and 
-            not self.walking and 
-            self.next_decision <= 0):
-            
-            self.next_decision = 60  # Fixed decision cooldown
-            
-            if distance <= 100 * self.game.tilemap.tile_size:
-                self.start_walking()
-            elif random.random() < 0.5:
-                self.start_walking()
+    def handle_intro_state(self):
+        # Make sure judge faces player during intro
+        self.flip = self.game.player.pos[0] < self.pos[0]
         
-        self.next_decision = max(0, self.next_decision - 1)
+        # Update animation
+        self.animation.update()
+        
+        # Check if intro animation is complete
+        if self.animation.img() == self.game.assets['judge/intro'].images[-1]:
+            self.state = 'idle'
+            self.state_timer = self.idle_anim_length
+            self.set_action('idle')
+        
+        return False
 
+    def handle_idle_state(self, tilemap, movement):
+        # Update the animation
+        self.animation.update()
+        
+        self.state_timer -= 1
+        
+        # Wait for one full idle animation to complete
+        if self.state_timer <= 0:
+            # Calculate distance to player
+            player_dist_x = self.game.player.pos[0] - self.pos[0]
+            player_dist_y = self.game.player.pos[1] - self.pos[1]
+            distance = (player_dist_x ** 2 + player_dist_y ** 2) ** 0.5
+            tile_distance = distance / self.game.tilemap.tile_size
+            
+            if tile_distance < 4:
+                # Run 1-3 cycles
+                self.run_cycles_remaining = random.randint(1, 3)
+                self.start_running()
+            else:
+                # 50% chance to run, 50% chance to gavel + idle
+                if random.random() < 0.5:
+                    self.run_cycles_remaining = random.randint(1, 3)
+                    self.start_running()
+                else:
+                    self.start_gavel_and_idle()
+        
+        return False
+
+    def handle_running_state(self, tilemap, movement):
+        # Handle movement
         if self.walking:
             movement = self.handle_movement(tilemap, movement)
-
+        
+        # Update parent class
         super().update(tilemap, movement=movement)
         
-        if self.walking:
-            self.set_action('run')
-        else:
-            self.set_action('idle')
-            
+        # Check if current run cycle is complete
+        if not self.walking:
+            self.run_cycles_remaining -= 1
+            if self.run_cycles_remaining > 0:
+                # Start next run cycle
+                self.walking = self.run_anim_length
+            else:
+                # All run cycles complete, go back to idle
+                self.state = 'idle'
+                self.state_timer = self.idle_anim_length
+                self.set_action('idle')
+        
         return self.handle_collision_with_player()
 
-    def start_walking(self):
-        # Make walking time a multiple of animation length for complete cycles
-        cycles = random.randint(2, 4)  # Run for 2-4 complete animation cycles
-        self.walking = self.run_anim_length * cycles
-        # Set initial direction based on player position
+    def handle_gavel_and_idle_state(self):
+        # Update the idle animation
+        self.animation.update()
+        
+        # Update gavel effect position
+        if self.gavel_effect_pos:
+            # Move gavel down 1 pixel per frame
+            new_x = self.gavel_effect_pos[0]
+            new_y = self.gavel_effect_pos[1] + 1
+            self.gavel_effect_pos = (new_x, new_y)
+            
+            # Check if gavel has moved past judge's y coordinate
+            if new_y > self.pos[1]+16:
+                self.gavel_effect_pos = None
+                self.gavel_effect_timer = 0
+            else:
+                # Check collision with player
+                self.check_gavel_collision()
+                # Keep gavel animation looping by incrementing timer
+                self.gavel_effect_timer += 1
+        
+        self.state_timer -= 1
+        
+        # Wait for idle animation to complete
+        if self.state_timer <= 0:
+            # Reset gavel effect
+            self.gavel_effect_pos = None
+            self.gavel_effect_timer = 0
+            # Go back to idle state for next cycle
+            self.state = 'idle'
+            self.state_timer = self.idle_anim_length
+            self.set_action('idle')
+        
+        return False
+
+    def start_running(self):
+        self.state = 'running'
+        self.walking = self.run_anim_length
+        # Set direction toward player
         self.flip = self.game.player.pos[0] < self.pos[0]
-        self.initial_flip = self.flip  # Store the initial direction
+        self.initial_flip = self.flip
+        self.set_action('run')
+
+    def start_gavel_and_idle(self):
+        self.state = 'gavel_and_idle'
+        self.state_timer = self.idle_anim_length
+        
+        # Create gavel effect 5 tiles above player's current position
+        player_center_x = self.game.player.rect().centerx
+        player_center_y = self.game.player.rect().centery
+        gavel_y = player_center_y - (7 * self.game.tilemap.tile_size)
+        
+        self.gavel_effect_pos = (player_center_x, gavel_y)
+        self.gavel_effect_timer = len(self.game.assets['judge/gavel'].images) * self.game.assets['judge/gavel'].img_duration
+        
+        # Judge continues idle animation while gavel effect plays above player
+        self.flip = self.game.player.pos[0] < self.pos[0]  # Face player
+        self.set_action('idle')
+
+    def check_gavel_collision(self):
+        """Check if the falling gavel collides with the player"""
+        if self.gavel_effect_pos:
+            # Get current gavel image for collision detection
+            total_frames = len(self.game.assets['judge/gavel'].images)
+            frame_duration = self.game.assets['judge/gavel'].img_duration
+            frame_index = (self.gavel_effect_timer // frame_duration) % total_frames
+            gavel_img = self.game.assets['judge/gavel'].images[frame_index]
+            
+            # Create gavel rect
+            gavel_rect = pygame.Rect(
+                self.gavel_effect_pos[0] - gavel_img.get_width() // 2,
+                self.gavel_effect_pos[1] - gavel_img.get_height() // 2,
+                gavel_img.get_width(),
+                gavel_img.get_height()
+            )
+            
+            # Check collision with player
+            if gavel_rect.colliderect(self.game.player.rect()):
+                # Kill player
+                self.game.dead += 1
+                self.game.sfx['hit'].play()
+                self.game.screenshake = max(16, self.game.screenshake)
+                
+                # Create death effects
+                for i in range(30):
+                    angle = random.random() * math.pi * 2
+                    speed = random.random() * 5
+                    self.game.sparks.append(Spark(self.game.player.rect().center, angle, 2 + random.random()))
+                    self.game.particles.append(Particle(self.game, 'particle', self.game.player.rect().center, 
+                        velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle + math.pi) * speed * 0.5], 
+                        frame=random.randint(0, 7)))
+                
+                # Remove gavel effect after hit
+                self.gavel_effect_pos = None
+                self.gavel_effect_timer = 0
+
+    def render(self, surf, offset=(0, 0)):
+        super().render(surf, offset=offset)
+        # Render the gavel effect above the player if active
+        if self.gavel_effect_pos:
+            # Calculate which frame of gavel animation to show (looping)
+            total_frames = len(self.game.assets['judge/gavel'].images)
+            frame_duration = self.game.assets['judge/gavel'].img_duration
+            frame_index = (self.gavel_effect_timer // frame_duration) % total_frames
+            
+            gavel_img = self.game.assets['judge/gavel'].images[frame_index]
+            render_x = self.gavel_effect_pos[0] - offset[0] - gavel_img.get_width() // 2
+            render_y = self.gavel_effect_pos[1] - offset[1] - gavel_img.get_height() // 2
+            
+            surf.blit(gavel_img, (render_x, render_y))
 
     def handle_movement(self, tilemap, movement):
         # Use the stored initial direction instead of updating based on player position
@@ -313,7 +457,7 @@ class Judge(Enemy):
                 self.flip = not self.flip
                 self.initial_flip = self.flip
             else:
-                # Use same speed as parent Enemy class (0.5) - set directly, don't add to existing movement
+                # Use same speed - set directly, don't add to existing movement
                 movement = (-self.movement_speed if self.flip else self.movement_speed, movement[1])
         else:
             # When reaching a ledge, reverse direction and store it
@@ -348,6 +492,7 @@ class Judge(Enemy):
 
         return super().handle_collision_with_player()
     
+
 class Money(PhysicsEntity):
     def __init__(self, game, pos, value = 1, size=(16, 16)):
         super().__init__(game, 'money', pos, size)

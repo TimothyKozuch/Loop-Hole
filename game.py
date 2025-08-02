@@ -58,6 +58,7 @@ class Game:
             'enemy/run': Animation(load_images_with_black('entities/enemy/run'), img_dur=4),
 
             'judge/intro': Animation(load_images_with_black('entities/judge/intro'), img_dur=4),
+            'judge/gavel': Animation(load_images_with_black('entities/judge/gavel'), img_dur=4),
             'judge/idle': Animation(load_images_with_black('entities/judge/idle'), img_dur=15),
             'judge/run': Animation(load_images_with_black('entities/judge/run'), img_dur=10),
 
@@ -239,6 +240,8 @@ class Game:
                 if kill:
                     self.lootMoney(enemy.rect().center)
                     self.enemies.remove(enemy)
+            
+            
             
             for friend in self.friends.copy():
                 kill = friend.update(self.tilemap, (0, 0))
