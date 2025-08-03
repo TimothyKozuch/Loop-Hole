@@ -387,7 +387,7 @@ class Judge(Enemy):
         # Create gavel effect 5 tiles above player's current position
         player_center_x = self.game.player.rect().centerx
         player_center_y = self.game.player.rect().centery
-        gavel_y = player_center_y - (7 * self.game.tilemap.tile_size)
+        gavel_y = player_center_y - (9 * self.game.tilemap.tile_size)
         
         self.gavel_effect_pos = (player_center_x, gavel_y)
         self.gavel_effect_timer = len(self.game.assets['judge/gavel'].images) * self.game.assets['judge/gavel'].img_duration
