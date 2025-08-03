@@ -301,7 +301,7 @@ class Judge(Enemy):
             distance = (player_dist_x ** 2 + player_dist_y ** 2) ** 0.5
             tile_distance = distance / self.game.tilemap.tile_size
             
-            if tile_distance < 4:
+            if tile_distance < 4 or tile_distance > 20:
                 # Run 1-3 cycles
                 self.run_cycles_remaining = random.randint(1, 3)
                 self.start_running()
