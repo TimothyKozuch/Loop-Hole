@@ -1,0 +1,45 @@
+{
+  "dialogueTree": {
+    "Lawyer":{
+      "start":{
+        "speaker": "Lawyer",
+        "text": "Yippee! I have found a loophole. I better get to the courthouse!",
+        "audioFile": "office.wav",
+        "animation": "None"
+      }
+    },
+    "Accountant": {
+      "start": {
+        "speaker": "Accountant",
+        "text": "Would you like to go shopping?",
+        "audioFile": "office.wav",
+        "animation": "None",
+        "choices": [
+          {
+            "text": "Yes",
+            "nextNode": "shop"
+          },
+          {
+            "text": "No",
+            "nextNode": "exit"
+          }
+        ]
+      },
+      "shop": {
+        "speaker": "Accountant",
+        "text": "Spend your well deserved money",
+        "audioFile": "office.wav",
+        "animation": "None",
+        "menu": "shop",
+        "choices": []
+      },
+      "exit": {
+        "speaker": "Accountant",
+        "text": "goodbye",
+        "audioFile": "office.wav",
+        "animation": "None",
+        "choices": []
+      }
+    }
+  }
+}
