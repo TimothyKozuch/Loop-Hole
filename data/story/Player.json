@@ -19,7 +19,11 @@
         "bribeLevel/judgeMaxHealth": 0,
         "carLevel/keyFrequency": 0
     },
-    "flags": {},
+    "flags": {
+        "Melody_Song_flags": {},
+        "Lyla_Silence_flags": {}
+    },
+    
     "Team": [
         "paralegal"
     ],

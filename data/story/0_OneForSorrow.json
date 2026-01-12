@@ -1,0 +1,155 @@
+{
+  "dialogueTree": {
+    "metadata": {
+      "version": "1.0",
+      "character": "Lyla",
+      "questId": "main_quest_01",
+      "description": "Initial conversation with Lyla before school"
+    },
+    "friend": {
+      "start": {
+        "id": "start",
+        "type": "npc_dialogue",
+        "speaker": "friend",
+        "text": "HIIIIIIIIIIIIII",
+        "audioFile": "HIIIIIIIIIII.wav",
+        "animation": "None",
+        "choices": []
+      }
+    },
+    "Corwin": {
+      "start": {
+        "id": "start",
+        "type": "npc_dialogue",
+        "speaker": "Corwin",
+        "text": "You know she should be flying by now.",
+        "audioFile": "should_be_flying_01.wav",
+        "animation": "None",
+        "choices": [
+          {
+            "id": "choice_1",
+            "text": "...",
+            "nextNode": "Lyla_gets_bullied"
+          }
+        ]
+      },
+      "Lyla_gets_bullied": {
+        "id": "Lyla_gets_bullied",
+        "type": "npc_dialogue",
+        "speaker": "Elara",
+        "text": "I know, but you also know why she's never in class. Lyla gets bullied even worse whenever she isn't around. We need to get involved.",
+        "audioFile": "Lyla_gets_bullied_01.wav",
+        "animation": "None",
+        "choices": [
+          {
+            "id": "choice_2",
+            "text": "...",
+            "nextNode": "don't_make_it_worse_end"
+          }
+        ]
+      },
+      "don't_make_it_worse_end": {
+        "id": "don't_make_it_worse_end",
+        "type": "npc_dialogue",
+        "speaker": "Corwin",
+        "text": "By The Song, I hope we don't make it worse for them.",
+        "audioFile": "don't_make_it_worse_01.wav",
+        "animation": "None",
+        "choices": []
+      }
+    },
+    "Lyla": {
+      "start": {
+        "id": "start",
+        "type": "npc_dialogue",
+        "speaker": "Lyla",
+        "text": "The night is so empty and quiet, it's ...",
+        "audioFile": "Lyla_greeting_01.wav",
+        "animation": "Lyla_facing_away",
+        "choices": [
+          {
+            "id": "choice_1",
+            "text": "Terrifying (scared of the dark, honest)",
+            "nextNode": "Peaceful",
+            "flags_changes": {
+              "Melody_Song_flags": ["scared of the dark", "honest"]
+            }
+          },
+          {
+            "id": "choice_2",
+            "text": "Nothing to be afraid of (brave face, liar)",
+            "nextNode": "Peaceful",
+            "flags_changes": {
+              "Melody_Song_flags": ["brave face", "liar"]
+            }
+          }
+        ]
+      },
+      "Peaceful": {
+        "id": "Peaceful",
+        "type": "npc_dialogue",
+        "speaker": "Lyla",
+        "text": "Peaceful...",
+        "audioFile": "lyla_peaceful_01.wav",
+        "animation": "None",
+        "flags_changes": {
+          "Lyla_Silence_flags": ["dark knight"]
+        },
+        "choices": [
+          {
+            "id": "choice_3",
+            "text": "Oh...",
+            "nextNode": "It's_ok_Mel"
+          },
+          {
+            "id": "choice_4",
+            "text": "Nothing good comes from silence...",
+            "nextNode": "It's_ok_Mel"
+          }
+        ]
+      },
+      "It's_ok_Mel": {
+        "id": "It's_ok_Mel",
+        "type": "npc_dialogue",
+        "speaker": "Lyla",
+        "text": "It's ok Mel, you can sleep in here tonight",
+        "audioFile": "It's_ok_01.wav",
+        "animation": "facing Mel",
+        "choices": [
+          {
+            "id": "choice_5",
+            "text": "That's not why...ok...so you wont get scared",
+            "nextNode": "Never_scared_end"
+          }
+        ]
+      },
+      "Never_scared_end": {
+        "id": "Never_scared_end",
+        "type": "npc_dialogue",
+        "speaker": "Lyla",
+        "text": "I'm never scared with you around",
+        "audioFile": "never_scared_01.wav",
+        "animation": "None",
+        "end of level": "True",
+        "choices": []
+      }
+    },
+    "conditionTypes": {
+      "stat_check": "Compare player stat against value",
+      "has_item": "Check if player possesses specific item",
+      "variable_check": "Check global variable state",
+      "quest_status": "Check quest completion status",
+      "relationship_check": "Check relationship level with character"
+    },
+    "effectTypes": {
+      "modify_variable": "Change global variable value",
+      "give_item": "Add item to player inventory",
+      "remove_item": "Remove item from player inventory",
+      "give_experience": "Award experience points",
+      "give_money": "Award currency",
+      "start_quest": "Begin new quest",
+      "complete_quest": "Mark quest as finished",
+      "modify_relationship": "Change relationship with character"
+    }
+  }
+}
